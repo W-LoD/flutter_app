@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/NameDate.dart';
-import '../authoriz/data_work.dart';
-import '../models/person.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/data_work_bloc.dart';
 import '../widgets/widgets.dart';
 
 class MainScreen extends StatefulWidget {
@@ -13,11 +14,13 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  var personObject = Person('1', '2', '3', '4');
   @override
   Widget build(BuildContext context) {
-
-    readData(personObject);
+    return Scaffold(
+        backgroundColor: AppColors.lightBlue,
+        body: BlocBuilder<DataWorkCubit, DataWorkState>(
+        builder: (context, state) {
+        context.read<DataWorkCubit>().getData();
     List<Widget> widgetOptions = <Widget> [
       const NameDate(),
       ListView.builder(
@@ -29,8 +32,8 @@ class MainScreenState extends State<MainScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Имя: ${personObject.name}', style: AppTypography.font24),
-                    Text('Дата регистрации: ${personObject.date}', style: AppTypography.font24)
+                    Text('Имя: ' + state.person!.name, style: AppTypography.font24),
+                    Text('Дата регистрации: ' + state.person!.date, style: AppTypography.font24)
                   ],
                 )
             );
@@ -40,8 +43,8 @@ class MainScreenState extends State<MainScreen> {
     void _onItemTap(int index){
       setState(() {
         _selectedIndex = index;
-          debugPrint("Login2: ${personObject.login}");
-          debugPrint("Password2: ${personObject.pass}");
+          //debugPrint("Login2: ${personObject.login}");
+          //debugPrint("Password2: ${personObject.pass}");
       });
     }
     return Scaffold(
@@ -66,6 +69,8 @@ class MainScreenState extends State<MainScreen> {
           onTap: _onItemTap,
         )
     );
+        },
+        )
+    );
   }
 }
-

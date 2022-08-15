@@ -1,71 +1,70 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../models/person.dart';
 import '../repository/data_work_repository.dart';
 
-abstract class WorkState {
-  WorkState({
+class LocalStorageState {
+  LocalStorageState({
     this.person,
   });
+
   Person? person;
 }
 
-class NotLoadedState extends DataWorkState {
+class NotLoadedState extends LocalStorageState {
   NotLoadedState({required super.person});
 }
 
-class NotCheckedState extends DataWorkState {
+class NotCheckedState extends LocalStorageState {
   NotCheckedState({required super.person});
 }
 
-class LoadedState extends DataWorkState {
+class LoadedState extends LocalStorageState {
   LoadedState({required super.person});
 }
 
-class CheckedState extends DataWorkState {
+class CheckedState extends LocalStorageState {
   CheckedState({required super.person});
 }
 
-class DataWorkState extends WorkState {
-  DataWorkState({
-    Person? person,
-  }) : super(
-    person: person,
-  );
-}
-
-class DataWorkCubit extends Cubit<DataWorkState> {
-  DataWorkCubit() : super(DataWorkState());
+class DataWorkCubit extends Cubit<LocalStorageState> {
+  DataWorkCubit() : super(LocalStorageState());
 
   final _dataWorkRepository = DataWorkRepository();
 
   late Person _person;
 
-  void isLogged() async{
+  void logOrNot() async {
     getData();
-    String isLog = await _dataWorkRepository.isLogged();
-    if(isLog == 'true')
+    String isLog = await _dataWorkRepository.logOrNot();
+    if (isLog == 'true') {
       emit(CheckedState(person: _person));
-    else
+    } else {
       emit(NotCheckedState(person: _person));
+    }
   }
 
-  void setData(Person person) async{
+  void setData(Person person) async {
     _person = await _dataWorkRepository.writeData(person);
     emit(NotLoadedState(person: _person));
   }
 
   void getDataLP(Person person) async {
     bool boolPerson = await _dataWorkRepository.readDataLP(person);
-    print(state);
-    if(boolPerson)
+    if (boolPerson) {
       emit(LoadedState(person: _person));
-    else
+    } else {
       emit(NotLoadedState(person: _person));
-
+    }
   }
 
-    Future getData() async {
+  Future getData() async {
     _person = await _dataWorkRepository.readData();
     return _person;
+  }
+
+  void logOut() {
+    _dataWorkRepository.logOut();
+    emit(NotLoadedState(person: _person));
   }
 }

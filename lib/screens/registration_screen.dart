@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/data_work_bloc.dart';
-import 'login_screen.dart';
 import '../widgets/widgets.dart';
 import '../models/person.dart';
 
@@ -24,7 +23,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.lightBlue,
-      body: BlocBuilder<DataWorkCubit, DataWorkState>(
+      body: BlocBuilder<DataWorkCubit, LocalStorageState>(
         builder: (context, state) {
           return SafeArea(
             child: LayoutBuilder(builder: (context, constraint) {
@@ -32,104 +31,117 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 key: _formKey,
                 child: SingleChildScrollView(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraint.maxHeight),
+                    constraints:
+                        BoxConstraints(minHeight: constraint.maxHeight),
                     child: IntrinsicHeight(
-                      child: Column(
-                        children: [
-                          Padding(
-                              padding: const EdgeInsets.all(15),
-                              child:Text(
-                                'Регистрация',
-                                style: AppTypography.font24,
-                              )),
-                          Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: TextField(
-                                controller: nameController,
-                                style: AppTypography.font14,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  icon: Icon(Icons.people),
-                                  hintText: "Введите имя",
+                      child: Container(
+                        decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage(
+                                    "../assets/images/logo_registration.jpg"),
+                                fit: BoxFit.cover)),
+                        child: Column(
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Text(
+                                  'Регистрация',
+                                  style: AppTypography.font24,
                                 )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: TextField(
-                                controller: loginController,
-                                style: AppTypography.font14,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  icon: Icon(Icons.login),
-                                  hintText: "Введите логин",
-                                  helperText: "Логин используется для входа в систему",
-                                )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: TextField(
-                                controller: passController,
-                                style: AppTypography.font14,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  icon: Icon(Icons.lock),
-                                  hintText: "Введите пароль",
-                                  helperText: "Пароль используется для входа в систему",
-                                )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child:ElevatedButton(
-                                onPressed:() {
-                                  DateTime now = DateTime.now();
-                                  String convertedDateTime = "${now.hour.toString().padLeft(2,'0')}:${now.minute.toString().padLeft(2,'0')}";
-                                  var personObject = Person(
-                                    nameController.text.toString(),
-                                    loginController.text.toString(),
-                                    passController.text.toString(),
-                                    convertedDateTime,
-                                  );
-                                  context.read<DataWorkCubit>().setData(personObject);
-                                  print(state);
-                                  if (_formKey.currentState!.validate()) {
-                                    debugPrint("Details are validated!!");
-                                    debugPrint("Login: ${loginController.text}");
-                                    debugPrint("Name: ${nameController.text}");
-                                    debugPrint("Password: ${passController.text}");
-                                    debugPrint("Date: ${convertedDateTime}");
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text("You're sucsefully registered!"),
-                                      ),
-                                    );
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.blue,
-                                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                                ),
-                                child: Text('Создать аккаунт',
-                                    style: AppTypography.font16)),
-                          ),
-
-                          Text(
-                            'Уже есть аккаунт?',
-                            style: AppTypography.font14,
-                          ),
-                          GestureDetector(
-                            onTap: (() {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: ((context) => const LoginScreen()),
-                                ),
-                              );
-                            }),
-                            child: Text(
-                              'Войти',
-                              style: AppTypography.font_14,
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: TextField(
+                                  controller: nameController,
+                                  style: AppTypography.font14,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    icon: Icon(Icons.people),
+                                    hintText: "Введите имя",
+                                  )),
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: TextField(
+                                  controller: loginController,
+                                  style: AppTypography.font14,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    icon: Icon(Icons.login),
+                                    hintText: "Введите логин",
+                                    helperText:
+                                        "Логин используется для входа в систему",
+                                  )),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: TextField(
+                                  controller: passController,
+                                  style: AppTypography.font14,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    icon: Icon(Icons.lock),
+                                    hintText: "Введите пароль",
+                                    helperText:
+                                        "Пароль используется для входа в систему",
+                                  )),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    DateTime now = DateTime.now();
+                                    String convertedDateTime =
+                                        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+                                    var personObject = Person(
+                                      nameController.text.toString(),
+                                      loginController.text.toString(),
+                                      passController.text.toString(),
+                                      convertedDateTime,
+                                    );
+                                    context
+                                        .read<DataWorkCubit>()
+                                        .setData(personObject);
+                                    if (_formKey.currentState!.validate()) {
+                                      debugPrint("Details are validated!!");
+                                      debugPrint(
+                                          "Login: ${loginController.text}");
+                                      debugPrint(
+                                          "Name: ${nameController.text}");
+                                      debugPrint(
+                                          "Password: ${passController.text}");
+                                      debugPrint("Date: $convertedDateTime");
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              "You're sucsefully registered!"),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.blue,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 50, vertical: 20),
+                                  ),
+                                  child: Text('Создать аккаунт',
+                                      style: AppTypography.font16)),
+                            ),
+                            Text(
+                              'Уже есть аккаунт?',
+                              style: AppTypography.font14,
+                            ),
+                            GestureDetector(
+                              onTap: (() {
+                                context.read<DataWorkCubit>().logOut();
+                              }),
+                              child: Text(
+                                'Войти',
+                                style: AppTypography.font_14,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -138,7 +150,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             }),
           );
         },
-    )
+      ),
     );
   }
 }
